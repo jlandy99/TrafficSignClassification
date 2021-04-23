@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 from PIL import Image
 
-from helper import plot_class_dist_and_stats
+from plot import plot_class_dist_and_stats
 from config import NUM_TRAIN_IMAGES, NUM_TEST_IMAGES, NUM_TOTAL_IMAGES, IMAGE_DIM, N_CLASS
 
 
@@ -111,7 +111,7 @@ def preprocess():
       """Now we will analyze the distribution of the classes in the training and testing data. We want to make sure the dataset is balanced and not heavily biased towards a specific class so we will balance the dataset here"""
 
     print('\nCombined Dataset Statistics -----------------------------------------')
-    plot_class_dist_and_stats(Y_processed, N_CLASS, 'original_distribution.png')
+    plot_class_dist_and_stats(Y_processed, N_CLASS, 'plots/original_distribution.png')
     
     return X_processed, Y_processed
     
@@ -142,7 +142,7 @@ def rebalance(X_processed, Y_processed):
     NEW_NUM_TOTAL_IMAGES = new_Y_processed.shape[0]
 
     print("\nMore Balanced Combined Dataset Statistics")
-    plot_class_dist_and_stats(new_Y_processed, N_CLASS, 'balanced_distribution.png')
+    plot_class_dist_and_stats(new_Y_processed, N_CLASS, 'plots/balanced_distribution.png')
     
     return new_X_processed, new_Y_processed, NEW_NUM_TOTAL_IMAGES
 

@@ -6,7 +6,7 @@ from torchvision import datasets, models, transforms
 from torch.utils.data.dataset import Dataset
 from sklearn.utils import shuffle
 
-from config import NUM_TOTAL_IMAGES, TRAIN_RATIO, VAL_RATIO
+from config import NUM_TOTAL_IMAGES, TRAIN_RATIO, VAL_RATIO, NUM_BATCHES
 
 
 class TrafficSignDataset(Dataset):
@@ -41,8 +41,8 @@ def dataLoader(X_processed, Y_processed, TOTAL_IMAGES):
     val_data = TrafficSignDataset(X_processed, Y_processed, val_range)
     test_data = TrafficSignDataset(X_processed, Y_processed, test_range)
 
-    train_loader = DataLoader(train_data, batch_size=int(TRAIN_SPLIT_SIZE / 40))
-    val_loader = DataLoader(val_data, batch_size=int(VAL_SPLIT_SIZE / 40))
+    train_loader = DataLoader(train_data, batch_size=int(TRAIN_SPLIT_SIZE / (NUM_BATCHES - 1)))
+    val_loader = DataLoader(val_data, batch_size=int(VAL_SPLIT_SIZE / (NUM_BATCHES - 1)))
     test_loader = DataLoader(test_data, batch_size=1)
     
     return train_loader, val_loader, test_loader

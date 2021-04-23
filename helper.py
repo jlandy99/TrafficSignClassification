@@ -1,27 +1,8 @@
 import torch
 import numpy as np
-import matplotlib.pyplot as plt
 from tqdm import tqdm
 
-from config import CRITERION
-
-
-def plot_class_dist_and_stats(y, n_class, filename):
-    fig, ax = plt.subplots()
-
-    ax.hist(y, n_class)
-    ax.set_xlabel('Class ID')
-    ax.set_ylabel('Number of Samples')
-    ax.set_title('Distribution of Samples by Class')
-    plt.savefig(filename)
-
-    bincount = np.bincount(y.astype(np.uint8))
-    print('\nMedian:\t', np.median(bincount))
-    print('Mean:\t', np.average(bincount))
-    print('Stddev:\t', np.std(bincount))
-    print('Min:\t', np.amin(bincount))
-    print('Max:\t', np.amax(bincount))
-
+from config import CRITERION, N_CLASS
 
 # X_train and Y_train are the training portion (not including validaiton)
 # validation should have been already split off
@@ -50,15 +31,15 @@ def train(train_loader, net, optimizer, epoch):
     #   print('\n [epoch %d] loss: %.3f elapsed time %.3f' %
     #         (epoch, running_loss, end-start))
 
-    print('\n [epoch %d] loss: %.3f' %(epoch, running_loss))
-
     return running_loss
 
 
 # def test(test_loader, net, criterion, device):
 def test(test_loader, net):
+
     losses = 0.
     cnt = 0
+
     with torch.no_grad():
 
         net = net.eval()
@@ -72,15 +53,20 @@ def test(test_loader, net):
             losses += loss.item()
             cnt += 1
 
-    print('\n',losses / cnt)
     return (losses/cnt)
 
 
 # def cal_accuracy(test_loader, net, criterion, device):
-def cal_accuracy(test_loader, net):
+# When test set is true we know we are not using this function for test set so we can then
+# keep track of correct/incorrect for each class for plotting
+def cal_accuracy(test_loader, net, test_set=False):
 
     count = 0.0
     correct = 0.0
+
+    # only used for test set
+    correct_from_class = np.zeros(N_CLASS)
+    total_from_class = np.zeros(N_CLASS)
 
     with torch.no_grad():
 
@@ -100,26 +86,14 @@ def cal_accuracy(test_loader, net):
 
             # add correctly identified samples
             correct += np.sum(y_pred == labels)
-          
+
+            #  test set batch size is 1 so this should work ebcause each output only has
+            #  one sample
+            if test_set:
+                correct_from_class[labels] += (y_pred == labels)
+                total_from_class[labels] += 1
+
+        print(correct_from_class)
+        print(total_from_class)
+
         return correct / count
-
-
-def plot_history(train_history, val_history, filename, loss=False):
-
-    plt.figure()
-
-    x_axis = np.arange(len(train_history))
-    plt.plot(x_axis, train_history, label="Training")
-    plt.plot(x_axis, val_history, label="Validation")
-
-    plt.xticks(x_axis)
-    plt.xlabel('Epoch')
-
-    if loss:
-        plt.ylabel('Loss')
-    else:
-        plt.ylabel('Accuracy')
-
-    plt.legend()
-
-    plt.savefig(filename)
