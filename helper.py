@@ -1,40 +1,37 @@
-import matplotlib.pyplot as plt
-import numpy as np
-from tqdm import tqdm
 import torch
+import numpy as np
+import matplotlib.pyplot as plt
+from tqdm import tqdm
 
 
 def plot_class_dist_and_stats(y, n_class, filename):
+    fig, ax = plt.subplots()
 
-  fig, ax = plt.subplots()
+    ax.hist(y, n_class)
+    ax.set_xlabel('Class ID')
+    ax.set_ylabel('Number of Samples')
+    ax.set_title('Distribution of Samples by Class')
+    plt.savefig(filename)
 
-  ax.hist(y, n_class)
-  ax.set_xlabel('Class ID')
-  ax.set_ylabel('Number of Samples')
-  ax.set_title('Distribution of Samples by Class')
-  plt.savefig(filename)
-
-  bincount = np.bincount(y.astype(np.uint8))
-  print('\nMedian:\t', np.median(bincount))
-  print('Mean:\t', np.average(bincount))
-  print('Stddev:\t', np.std(bincount))
-  print('Min:\t', np.amin(bincount))
-  print('Max:\t', np.amax(bincount))
+    bincount = np.bincount(y.astype(np.uint8))
+    print('\nMedian:\t', np.median(bincount))
+    print('Mean:\t', np.average(bincount))
+    print('Stddev:\t', np.std(bincount))
+    print('Min:\t', np.amin(bincount))
+    print('Max:\t', np.amax(bincount))
 
 
-  # X_train and Y_train are the training portion (not including validaiton)
+# X_train and Y_train are the training portion (not including validaiton)
 # validation should have been already split off
 # def train(train_loader, net, criterion, optimizer, device, epoch):
 def train(train_loader, net, criterion, optimizer, epoch):
+    #   start = time.time()
+    running_loss = 0.0
+    cnt = 0
+    net = net.train()
 
-
-#   start = time.time()
-  running_loss = 0.0
-  cnt = 0
-  net = net.train()
-
-  # tqdm just prints a dynamically updating progress bar to the console
-  for images, labels in tqdm(train_loader):
+    # tqdm just prints a dynamically updating progress bar to the console
+    for images, labels in tqdm(train_loader):
 
     # images = images.to(device)
     # labels = labels.to(device)
@@ -46,22 +43,21 @@ def train(train_loader, net, criterion, optimizer, epoch):
     running_loss += loss.item()
     cnt += 1
 
-#   end = time.time()
-  running_loss /= cnt
-#   print('\n [epoch %d] loss: %.3f elapsed time %.3f' %
-#         (epoch, running_loss, end-start))
+    #   end = time.time()
+    running_loss /= cnt
+    #   print('\n [epoch %d] loss: %.3f elapsed time %.3f' %
+    #         (epoch, running_loss, end-start))
 
-  print('\n [epoch %d] loss: %.3f' %(epoch, running_loss))
+    print('\n [epoch %d] loss: %.3f' %(epoch, running_loss))
 
-  return running_loss
+    return running_loss
 
 
 # def test(test_loader, net, criterion, device):
 def test(test_loader, net, criterion):
-
-  losses = 0.
-  cnt = 0
-  with torch.no_grad():
+    losses = 0.
+    cnt = 0
+    with torch.no_grad():
 
     net = net.eval()
 
@@ -74,17 +70,17 @@ def test(test_loader, net, criterion):
       losses += loss.item()
       cnt += 1
       
-  print('\n',losses / cnt)
-  return (losses/cnt)
+    print('\n',losses / cnt)
+    return (losses/cnt)
 
 
 # def cal_accuracy(test_loader, net, criterion, device):
 def cal_accuracy(test_loader, net, criterion):
 
-  count = 0.0
-  correct = 0.0
+    count = 0.0
+    correct = 0.0
 
-  with torch.no_grad():
+    with torch.no_grad():
 
     net = net.eval()
 
@@ -108,20 +104,20 @@ def cal_accuracy(test_loader, net, criterion):
 
 def plot_history(train_history, val_history, filename, loss=False):
 
-  plt.figure()
+    plt.figure()
 
-  x_axis = np.arange(len(train_history))
-  plt.plot(x_axis, train_history, label="Training")
-  plt.plot(x_axis, val_history, label="Validation")
+    x_axis = np.arange(len(train_history))
+    plt.plot(x_axis, train_history, label="Training")
+    plt.plot(x_axis, val_history, label="Validation")
 
-  plt.xticks(x_axis)
-  plt.xlabel('Epoch')
+    plt.xticks(x_axis)
+    plt.xlabel('Epoch')
 
-  if loss:
+    if loss:
     plt.ylabel('Loss')
-  else:
+    else:
     plt.ylabel('Accuracy')
 
-  plt.legend()
+    plt.legend()
 
-  plt.savefig(filename)
+    plt.savefig(filename)
