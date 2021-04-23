@@ -26,9 +26,9 @@ def main():
     # Create a dataset class and a data loader object to split into train, val, test
     train_loader, val_loader, test_loader = dataLoader(X_processed, Y_processed, TOTAL_IMAGES)
     # Train our model
-    train_model(net, train_loader, val_loader)
+    train_loss_history, val_loss_history, train_acc_history, val_acc_history = train_model(net, train_loader, val_loader)
     # Plot final results (accuracy and loss across epochs)
-    plot(test_loader)
+    plot(net, test_loader, train_loss_history, val_loss_history, train_acc_history, val_acc_history)
 
 
 if __name__ == '__main__':
