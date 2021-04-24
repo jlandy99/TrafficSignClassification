@@ -31,6 +31,14 @@ def plot(net, train_loss_history, val_loss_history, train_acc_history, val_acc_h
     print('\nFinished Training, Testing on test set')
 
 
+def print_stats(arr):
+    print('\nMedian:\t', np.median(arr))
+    print('Mean:\t', np.average(arr))
+    print('Stddev:\t', np.std(arr))
+    print('Min:\t', np.amin(arr))
+    print('Max:\t', np.amax(arr))
+
+
 def plot_class_dist_and_stats(y, n_class, filepath):
     fig, ax = plt.subplots()
 
@@ -41,9 +49,4 @@ def plot_class_dist_and_stats(y, n_class, filepath):
     plt.savefig(filepath)
 
     bincount = np.bincount(y.astype(np.uint8))
-    print('\nMedian:\t', np.median(bincount))
-    print('Mean:\t', np.average(bincount))
-    print('Stddev:\t', np.std(bincount))
-    print('Min:\t', np.amin(bincount))
-    print('Max:\t', np.amax(bincount))
-
+    print_stats(bincount)

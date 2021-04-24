@@ -108,6 +108,26 @@ def cal_accuracy(test_loader, net, test_set=False):
             ax.set_xlabel('Class ID')
             ax.set_title('Model Performance on Test Set by Class')
             ax.legend()
-            plt.savefig('plots/test_set_performance.png')
+            plt.savefig('plots/test_set_performance_totals.png')
+
+            # calculate accuracy and replot
+            plt.clf()
+            fig, ax = plt.subplots()
+
+            accuracy_per_class = correct_from_class / (correct_from_class + incorrect_from_class)
+            ax.bar(x_axis, accuracy_per_class)
+            ax.set_ylabel('Accuracy (%)')
+            ax.set_xlabel('Class ID')
+            ax.set_title('Model Accuracy on Test Set by Class')
+            plt.savefig('plots/test_set_performance_accuracy.png')
+
+            # calculate statistcs
+            print('\nTest Set Accuracy Statistics')
+            print('\nMedian Class Accuracy:\t', "%.4f" % np.median(accuracy_per_class))
+            print('Mean Class Accuracy:\t', "%.4f" % np.average(accuracy_per_class))
+            print('Stddev Class Accuracy:\t', "%.4f" % np.std(accuracy_per_class))
+            print('Min Class Accuracy:\t', "%.4f" % np.amin(accuracy_per_class))
+            print('Max Class Accuracy:\t', "%.4f" % np.amax(accuracy_per_class))
+
 
         return correct / count
