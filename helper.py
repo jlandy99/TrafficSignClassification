@@ -1,6 +1,7 @@
 import torch
 import numpy as np
 from tqdm import tqdm
+import matplotlib.pyplot as plt
 
 from config import CRITERION, N_CLASS
 
@@ -66,7 +67,7 @@ def cal_accuracy(test_loader, net, test_set=False):
 
     # only used for test set
     correct_from_class = np.zeros(N_CLASS)
-    total_from_class = np.zeros(N_CLASS)
+    incorrect_from_class = np.zeros(N_CLASS)
 
     with torch.no_grad():
 
@@ -91,9 +92,22 @@ def cal_accuracy(test_loader, net, test_set=False):
             #  one sample
             if test_set:
                 correct_from_class[labels] += (y_pred == labels)
-                total_from_class[labels] += 1
+                incorrect_from_class[labels] += (y_pred != labels)
 
-        print(correct_from_class)
-        print(total_from_class)
+
+        #  stacked bar chart
+        if test_set:
+            fig, ax = plt.subplots()
+
+            x_axis = np.arange(N_CLASS)
+
+            ax.bar(x_axis, correct_from_class, label='Correct')
+            ax.bar(x_axis, incorrect_from_class, bottom=incorrect_from_class, label='Incorrect')
+
+            ax.set_ylabel('Number of Samples')
+            ax.set_xlabel('Class ID')
+            ax.set_title('Model Performance on Test Set by Class')
+            ax.legend()
+            plt.savefig('plots/test_set_performance.png')
 
         return correct / count
