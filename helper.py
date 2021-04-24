@@ -102,7 +102,7 @@ def cal_accuracy(test_loader, net, test_set=False):
             x_axis = np.arange(N_CLASS)
 
             ax.bar(x_axis, correct_from_class, label='Correct')
-            ax.bar(x_axis, incorrect_from_class, bottom=incorrect_from_class, label='Incorrect')
+            ax.bar(x_axis, incorrect_from_class, bottom=correct_from_class, label='Incorrect')
 
             ax.set_ylabel('Number of Samples')
             ax.set_xlabel('Class ID')
