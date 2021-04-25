@@ -66,7 +66,11 @@ def cal_accuracy(test_loader, net, test_set=False):
     correct = 0.0
 
     # only used for test set
+
+    # true positives for each class
     correct_from_class = np.zeros(N_CLASS)
+
+    # false negatives from each class
     incorrect_from_class = np.zeros(N_CLASS)
 
     with torch.no_grad():
@@ -95,8 +99,8 @@ def cal_accuracy(test_loader, net, test_set=False):
                 incorrect_from_class[labels] += (y_pred != labels)
 
 
-        #  stacked bar chart
         if test_set:
+            # stacked bar chart for totals
             fig, ax = plt.subplots()
 
             x_axis = np.arange(N_CLASS)
@@ -119,9 +123,10 @@ def cal_accuracy(test_loader, net, test_set=False):
             ax.set_ylabel('Accuracy (%)')
             ax.set_xlabel('Class ID')
             ax.set_title('Model Accuracy on Test Set by Class')
+            ax.legend()
 
             plt.ylim(bottom=0.50)
-            plt.savefig('plots/test_set_performance_accuracy.png')
+            plt.savefig('plots/test_set_accuracy.png')
 
             # calculate statistcs
             print('\nTest Set Accuracy Statistics')

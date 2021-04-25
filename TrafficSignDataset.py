@@ -17,7 +17,6 @@ class TrafficSignDataset(Dataset):
       # we want to shuffle the arrays so they are not always the exact same when training
       # make sures numpy arrays are uint8 type so arent excessvely big for pixel data
       # TODO WE MIGHT NOT NEED THIS CUZ DATALOADER MIGHT SHUFFLE ANYWAYS
-      X, y = shuffle(X.astype(np.uint8), y.astype(np.uint8))
 
       self.X = torch.from_numpy(X[data_range[0]:data_range[1]]).float()
       self.y = torch.from_numpy(y[data_range[0]:data_range[1]]).long()
@@ -30,6 +29,10 @@ class TrafficSignDataset(Dataset):
       
       
 def dataLoader(X_processed, Y_processed, TOTAL_IMAGES):
+
+    #  shuffle because classes are all next to each other based on how data was loaded
+    X_processed, Y_processed = shuffle(X_processed.astype(np.uint8), Y_processed.astype(np.uint8))
+
     TRAIN_SPLIT_SIZE = int(TOTAL_IMAGES * TRAIN_RATIO)
     VAL_SPLIT_SIZE = int(TOTAL_IMAGES * VAL_RATIO)
 

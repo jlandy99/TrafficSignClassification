@@ -19,8 +19,10 @@ class Net(nn.Module):
         nn.Flatten(),
         nn.Linear(in_features=16384, out_features=2048),
         nn.ReLU(inplace=True),
+        nn.Dropout(p=DROPOUT_PROB),
         nn.Linear(in_features=2048, out_features=512),
         nn.ReLU(inplace=True),
+        nn.Dropout(p=DROPOUT_PROB),
         nn.Linear(in_features=512, out_features=N_CLASS)
         )
 

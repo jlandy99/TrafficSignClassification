@@ -54,8 +54,9 @@ def train_model(net, train_loader, val_loader):
         print('Epoch Duration:', "%.1f" % (end - start), 'seconds')
 
     training_end = time.time()
-    minutes = int(training_end - training_start) % 60
-    secs = int(training_end - training_start) / 60
+    mins = int(int(training_end - training_start) / 60)
+    secs = int(training_end - training_start) % 60
+
     print('Training Duration:', mins, 'minutes and', secs, 'seconds')
 
     return train_loss_history, val_loss_history, train_acc_history, val_acc_history
