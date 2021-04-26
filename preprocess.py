@@ -6,7 +6,6 @@ from PIL import Image
 from plot import plot_class_dist_and_stats
 from config import NUM_TRAIN_IMAGES, NUM_TEST_IMAGES, NUM_TOTAL_IMAGES, IMAGE_DIM, N_CLASS
 
-
 def preprocess():
     processed_path = 'Data/ProcessedData'
     X_processed_path = os.path.join(processed_path, 'X.npy')
@@ -26,9 +25,6 @@ def preprocess():
       print("X_processed and Y_processed already exist, loading from files")
       X_processed = np.load(X_processed_path)
       Y_processed = np.load(Y_processed_path)
-
-      assert X_processed.shape == (NUM_TOTAL_IMAGES, 3, IMAGE_DIM, IMAGE_DIM)
-      assert Y_processed.shape == (NUM_TOTAL_IMAGES,)
 
       print("X_processed, Y_processed loaded successfully")
 
@@ -56,9 +52,18 @@ def preprocess():
 
         for _ , row in df.iterrows():
 
+          # for each physical sign in the training sets, there are 30 images that create a"track"
+          # (frames of a short clip) so training/ testing on all of these will cause some overfitting
+          # because they are very similar, thus we will only consider every 5th image so there is less redundant data
+          # image position in track is the second number after underscore in file
+          image_num_in_track = int(row['Filename'][6:11])
+          if image_num_in_track % 5 != 0:
+            continue
+
           # open image up/downsample to standard size and insert into X_train
           # record label in Y_train
           img_path = os.path.join(os.path.join(raw_train_dir, subfolder), row['Filename'])
+
           img = Image.open(img_path).resize((IMAGE_DIM, IMAGE_DIM))
 
           # RGB channel needs to be second to be compatible with torch net
@@ -67,11 +72,6 @@ def preprocess():
           
           index += 1
 
-
-      assert index == NUM_TRAIN_IMAGES
-
-      # np.save(X_train_path, X_train)
-      # np.save(Y_train_path, Y_train)
 
       print("X training and Y training processed successfully")
       print("processing testing portion")
@@ -98,10 +98,11 @@ def preprocess():
 
         # print some updates to console
         if index % 500 == 0:
-          print("processed", index, "testing images")
+          print("processed", index, "images")
 
 
-      assert index == NUM_TOTAL_IMAGES
+      X_processed = X_processed[:index]
+      Y_processed = Y_processed[:index]
 
       np.save(X_processed_path, X_processed)
       np.save(Y_processed_path, Y_processed)
@@ -113,7 +114,7 @@ def preprocess():
     print('\nCombined Dataset Statistics -----------------------------------------')
     plot_class_dist_and_stats(Y_processed, N_CLASS, 'plots/original_distribution.png')
     
-    return X_processed, Y_processed
+    return X_processed, Y_processed, Y_processed.shape[0]
     
 
 def rebalance(X_processed, Y_processed):

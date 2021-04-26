@@ -125,7 +125,7 @@ def cal_accuracy(test_loader, net, test_set=False):
             ax.set_title('Model Accuracy on Test Set by Class')
             ax.legend()
 
-            plt.ylim(bottom=0.50)
+            plt.ylim(bottom=np.maximum(0, np.min(accuracy_per_class) - 0.05))
             plt.savefig('plots/test_set_accuracy.png')
 
             # calculate statistcs

@@ -24,7 +24,7 @@ def main():
     setupGPU()
 
     # Process our dataset
-    X_processed, Y_processed = preprocess()
+    X_processed, Y_processed, TOTAL_IMAGES = preprocess()
     # Normalize class distribution
     X_processed, Y_processed, TOTAL_IMAGES = rebalance(X_processed, Y_processed)
     # Print a summary of Neural Network
